@@ -1,5 +1,5 @@
 # Ex.No: 03   COMPUTE THE AUTO FUNCTION(ACF)
-Date: 
+Date: 03-11-2026
 
 ### AIM:
 To Compute the AutoCorrelation Function (ACF) of the data for the first 35 lags to determine the model
@@ -11,33 +11,68 @@ type to fit the data.
 4. Store the results in an array
 5. Represent the result in graphical representation as given below.
 ### PROGRAM:
+```python
+
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
-import numpy as np
+# Load Gold Stock Dataset
+df = pd.read_excel("/content/goldstock_100_rows.xlsx")
 
-data = [3, 16, 156, 47, 246, 176, 233, 140, 130,
-101, 166, 201, 200, 116, 118, 247,
-209, 52, 153, 232, 128, 27, 192, 168, 208,
-187, 228, 86, 30, 151, 18, 254,
-76, 112, 67, 244, 179, 150, 89, 49, 83, 147, 90,
-33, 6, 158, 80, 35, 186, 127]
+# Convert Date column
+df['Date'] = pd.to_datetime(df['Date'])
 
+# Sort data by date
+df = df.sort_values('Date')
+
+# Select Volume data
+data = df['Volume'].values
+
+# Find number of observations
+N = len(data)
+
+# Define lags
 lags = range(35)
 
+# Calculate mean and variance
+mean_data = np.mean(data)
+variance_data = np.var(data)
 
-#Pre-allocate autocorrelation table
+# Normalize the data
+normalized_data = (data - mean_data) / np.sqrt(variance_data)
 
-#Mean
+# Calculate autocorrelation
+autocorr_values = []
 
-#Variance
+for lag in lags:
+    if lag == 0:
+        autocorr_values.append(1)
+    else:
+        auto_cov = np.sum(
+            (data[:-lag] - mean_data) *
+            (data[lag:] - mean_data)
+        ) / N
 
-#Normalized data
+        autocorr_values.append(auto_cov / variance_data)
 
-#Go through lag components one-by-one
+# Plot ACF graph
+plt.figure(figsize=(10, 6))
+plt.stem(lags, autocorr_values)
 
-#display the graph
+plt.title('Autocorrelation of Gold Trading Volume')
+plt.xlabel('Lag')
+plt.ylabel('Autocorrelation')
+plt.grid(True)
+
+plt.show()
+
+
+```
 
 ### OUTPUT:
 
+<img width="1236" height="673" alt="image" src="https://github.com/user-attachments/assets/23e0330f-3d2a-41b8-ba9c-27dc0a308f92" />
+
 ### RESULT:
-        Thus we have successfully implemented the auto correlation function in python.
+Thus we have successfully implemented the auto correlation function in python.
